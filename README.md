@@ -7,4 +7,4 @@
 
 ## 2) Test Pyjac
 
-- [test installation](./test_installation/)
+- [test installation](./tests)
