@@ -12,6 +12,21 @@ import matplotlib.pyplot as plt
 import scipy.linalg as LA 
 import pandas as pd 
 
+'''
+For ROBERTO:
+
+there are a number of things which are not very clear in this script. I am sorry, I could not find a better one between yesterday and today. 
+First, most of the functions are in the functions.py file and not in this main script file. For the way how CEMA is implemented in particular, you have to take a look at those functions.
+
+This script first creates and solves a 1D flame cantera object. Then the flame solution is loaded and the eigenvalues are calculated. 
+You find a for loop (for eig2track in range(-1, -2, -1)) which is not intuitive: as the script is right now, eig2track only takes the value -1: this corresponds to looking for the maximum eigenvalue and trying to follow its evolution (the Chemical Explosive Mode). 
+I had this formulation because I wanted to see what happens if I try to track mode 2, mode 3, etc as well. 
+
+Based on the value of Z (mixture fraction), two different functions are called to do CEMA: one has the appendix "no_update" and the other "update": this corresponds to different strategies that I was trying out to recover the Chemical Explosive Mode.
+the update/no-update refers whether the explosive index vector which is compared to the EI at each location is updated progressively or not. In the former case, each grid point is compared to the contiguous one;
+in the latter case, every point's EI vector is compared to the EI vector where the maxiumum eigenvalue was found.
+'''
+
 #create gas from original mechanism file gri30.cti
 gas = ct.Solution('Skeletal29_N.cti')
 fuel_species = 'C2H4'
