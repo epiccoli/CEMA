@@ -68,6 +68,31 @@ def stats(vector,keys):
     print "Max value: ", max_val, " at position ", max_idx, " -> ", keys[max_idx]
 
 
+
+def reorder_species(gas):
+
+    '''
+    gas : cantera gas solution object
+
+    candidates : array of strings
+
+        Identifies the possible last specie in the new pyjac-compatible order. 
+        The first species appearing in the mechanism will be moved to the end. 
+    '''
+    specs = gas.species()[:]
+    candidates = ['AR', 'HE', 'N2']     # candidates of species to put last.
+    mask = [el in candidates for el in specs]   # list of bool
+    last_spec_idx = 2 # take the first species which appears in both lists
+    gas = ct.Solution(thermo='IdealGas', kinetics='GasKinetics',
+        species=specs[:last_spec_idx] + specs[last_spec_idx + 1:] + [specs[last_spec_idx]],
+        reactions=gas.reactions())
+
+    return gas
+    
+##########################################################################################
+# Main body of script
+##########################################################################################
+
 # Gas properties
 phi = 1.0
 P = 101325
@@ -79,12 +104,11 @@ npoints = 1000
 timestep = 1.5e-7
 CEMA_interval = 1 # only divisors of npoints
 
-N_eig = 8
-N_EI = 1
+N_eig = 8           # record 8 highest eigenvalues
+N_EI = 1            
 #### options 
 first_eigenmode = True
 first_ei = True
-
 
 
 # Create gas object
@@ -97,9 +121,9 @@ N2_ind = gas.species_index('AR')
 gas = ct.Solution(thermo='IdealGas', kinetics='GasKinetics',
         species=specs[:N2_ind] + specs[N2_ind + 1:] + [specs[N2_ind]],
         reactions=gas.reactions())
-# print gas.species_name(28) # >> should give N2
+# print gas.species_name(12) # >> should give AR
 
-
+pdb.set_trace()
 
 EI_keys = ['']*gas.n_species
 
